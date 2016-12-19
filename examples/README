@@ -1,0 +1,35 @@
+This dir contains a sample package, the dpkg-sig tempdir (named
+debsigs-ng.sample) and all generated files.
+
+What happened:
+sample$ dpkg-buildpackage -rfakeroot -uc -us
+[...]
+sample$ cd ..
+examples$ dpkg-sig --sign-changes full --sign builder dpkg-sig-example_0.1_i386.changes
+[...]
+
+The used dpkg-sig version was slightly modified to make the temporary
+files available.
+
+dpkg-sig did the following things:
+ 1) Parse the .changes to get all binaries that need to be signed.
+ 2) Get the md5sums, sha1sums, sizes and names of all members of the
+    deb (which is an ar archive)
+ 3) Write this information + some meta-data (Date, Role, Signer) in
+    a RFC822-compliant format to debsigs-ng.sample/digests.
+ 4) Clearsign debsigs-ng.sample/digests, the signed version is in
+    debsigs-ng.sample/digests.asc.
+ 5) debsigs-ng.sample/digests.asc is added to the deb (as new ar member)
+    with an unique name reflecting the signing role.
+ 6) The new md5sum and size of the deb are put in the .changes file.
+    As this invalidates an existing gpg signature, it is stripped.
+
+[This is an optional feature of dpkg-sig:
+ 7) The .dsc is signed (an unsigned copy is in debsigs-ng/dsc, the 
+    clearsigned copy is in debsigs-ng/dsc.asc and then moved to the
+	original location)
+ 8) The new .dsc size and md5sum are put in the .changes file.
+ 9) The new .changes is signed (an unsigned copy is in debsigs-ng/changes,
+    the clearsigned copy is in debsigs-ng/changes.asc and then moved
+	to the original location)
+]

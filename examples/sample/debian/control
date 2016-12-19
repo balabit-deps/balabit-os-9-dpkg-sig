@@ -1,0 +1,12 @@
+Source: dpkg-sig-example
+Section: devel
+Priority: optional
+Maintainer: Andreas Barth <aba@not.so.argh.org>
+Uploaders: Marc Brockschmidt <marc@dch-faq.de>
+Build-Depends-Indep: debhelper
+Standards-Version: 3.6.1.0
+
+Package: dpkg-sig-example
+Architecture: all
+Description: sample package
+ This is a example to show how dpkg-sig works.

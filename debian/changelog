@@ -1,0 +1,295 @@
+dpkg-sig (0.13.1+nmu4) unstable; urgency=medium
+
+  * Non-maintainer upload
+  * Exit non-zero upon unsigned .deb. Patch by Paul Harvey.
+    Closes: #783605
+
+ -- Christoph Biedl <debian.axhn@manchmal.in-ulm.de>  Tue, 20 Dec 2016 00:02:40 +0100
+
+dpkg-sig (0.13.1+nmu3) unstable; urgency=medium
+
+  * Non-maintainer upload
+  * Bump debhelper compat level. Closes: #817437
+
+ -- Christoph Biedl <debian.axhn@manchmal.in-ulm.de>  Sun, 18 Dec 2016 12:41:15 +0100
+
+dpkg-sig (0.13.1+nmu2) unstable; urgency=medium
+
+  * Non-maintainer upload.
+  * Handle trailing slashes in ar member names in deb archives created with
+    GNU ar. (Closes: #356509)
+  * Add support for control.tar, control.tar.xz, data.tar, data.tar.xz,
+    data.tar.lzma and data.tar.bz2. (Closes: #703437)
+    Based on a patch by Christoph Berg <myon@debian.org>.
+  * Use correct get_deb_parts() function name instead of undefined
+    get_deb_part(). (Closes: #635232)
+  * Remove dead website URL from package description in debian/control and
+    dpkg-sig(1) man page. Change dpkg-sig and debian/copyright to mention
+    the URL used to be the website. (Closes: #422175)
+  * Add build-arch and build-indep targets in debian/rules.
+  * Fix typo in man page for “overridden”.
+
+ -- Guillem Jover <guillem@debian.org>  Tue, 10 Jun 2014 19:53:53 +0200
+
+dpkg-sig (0.13.1+nmu1) unstable; urgency=low
+
+  * Non-maintainer upload.
+  * Fix "FTBFS with perl 5.18: POD errors":
+    fix POD by adding missing '=back'.
+    (Closes: #723867)
+  * debian/control: replace Build-Depends-Indep with Build-Depends. Both
+    debhelper and perl are needed during clean (lintian error).
+
+ -- gregor herrmann <gregoa@debian.org>  Fri, 25 Oct 2013 20:07:08 +0200
+
+dpkg-sig (0.13.1) unstable; urgency=low
+
+  * Non-Maintainer Upload by Gunnar Wolf
+  * Updated dependency on libconfigfile-perl to libconfig-file-perl,
+    updated the invocation of ConfigFile to Config::File, to avoid the
+    warning for the deprecated call (Closes: #387016)
+
+ -- Gunnar Wolf <gwolf@debian.org>  Mon, 20 Nov 2006 09:10:47 -0600
+
+dpkg-sig (0.13) unstable; urgency=low
+
+  * HE
+    - dpkg-sig:
+      + Fix -k option so that the maintainer name is still retrieved from the
+        gpg key. Patch from Julian Gilbey <jdg@debian.org>, thanks. (Closes:
+        #352727)
+      + Remove --debug option (but leave code in so that manual code changes
+        can reactivate the debug stuff). (Closes: #352723)
+    - dpkg-sig.pod:
+      + Update whole manpage, based on patch from Julian Gilbey
+        <jdg@debian.org>. Thanks! (Closes: #352730)
+    - examples/README:
+      + Replace a left-over debsigs-ng.sample/md5sums.asc by digests.asc.
+        Thanks for the note, Julian. (Closes: #342473)
+    - debian/control: 
+      + Updated Standards-Version to 3.6.2
+      + Make me Maintainer, aba Co-Maint (mostly to get dpkg-sig on my QA
+        overview page without co-maintained packages).
+
+    - Make package lintian clean (includes overrides for empty files, they
+      are empty for a reason).
+
+ -- Marc 'HE' Brockschmidt <he@debian.org>  Fri, 24 Feb 2006 01:05:53 +0100
+
+dpkg-sig (0.12) unstable; urgency=low
+
+  * HE
+    - dpkg-sig:
+      + [1-9A-F] describes possible hex digits not as well as [0-9A-F] (Yes,
+        i'm a brainless idiot *sigh*). This should fix the Signer field for
+        people using a 0x\S+0\S+ key id.
+      + If passphrase caching enabled, we now check the passphrase at the
+        beginning (and prompt again if something isn't ok)
+      + Properly quote the $key and $maintainer arguments to gpg. (Closes:
+        #308049)
+      + Let ssh choose the username for a host if it wasn't specified in the
+        URL, this allows the ssh config to do it's job. Thanks for the
+        report, Marc. (Closes: #331122)
+      + Handle ssh errors a *wee* *little* bit better. Almost no improvement,
+        but enough to thank Marc for the report. (Closes: #331123)
+      + Add missing chomps all over the place.
+      + Replace '*changes' in a exec(grep) because that's crap and we know
+        it (the .changes, not the crap).
+      + Use another exit code when trying to verify and finding a bad
+        signature. BAD SIG! GO TO YOUR ROOM! (Closes: #280559)
+      + Check if an unknown key was used to create a signature when verifying
+        a .deb. Output UNKNOWNSIG for those and exit with exitcode 3.
+      + Don't use /usr/bin/perl -W, but /usr/bin/perl -w, which doesn't output
+        stupid warnings.
+      + die gracefully if a file couldn't be found (and don't end the show
+        with a exit 0).
+
+ -- Marc 'HE' Brockschmidt <he@debian.org>  Tue,  8 Feb 2005 20:57:21 +0100
+
+dpkg-sig (0.11) unstable; urgency=low
+
+  * HE
+    - dpkg-sig:
+      + Change order of return values of get_md5sums.
+      + Renamed get_md5sums to get_deb_digests.
+      + Added get_deb_parts to allow faster listing of sigs.
+      + Use md5sum(1) instead of Digest::MD5
+      + Splitted the verify_deb into one sub per signature version,
+        this should allow to add new versions more easily.
+      + Implemented new signature format suggested by weasel (thanks for
+        that!). We now sign sha1sums, md5sums and the size of every
+        part in the deb archive. The new format also transports more
+        meta-information (Signer, Date and Role). (Closes: #276557) 
+      + Restructured dpkg-sig a bit to shorten the things done in main::
+      + Added a lot of documentation as POD.
+      + Added --remote-ssh-port|-o as cli option to allow people to
+        specify the remote sshd port. (Closes: #271454)
+
+    - debian/rules:
+      + Generate dpkg-sig.7 from the POD documentation in dpkg-sig.
+
+ -- Marc 'HE' Brockschmidt <he@debian.org>  Fri, 15 Oct 2004 17:07:16 +0200
+
+dpkg-sig (0.10) unstable; urgency=high
+
+  * HE
+    - urgency=high is IMHO needed, as #268376 would be a serious problems
+      for developers using stable.
+    - dpkg-sig:
+      + Really really really work without ConfigFile in client mode. (Closes:
+        #268376)
+      + Don't include the damn CVS dirs in the source. (Closes: #263106)
+
+ -- Marc 'HE' Brockschmidt <he@debian.org>  Fri, 27 Aug 2004 17:01:04 +0200
+
+dpkg-sig (0.9) unstable; urgency=low
+
+  * HE:
+    - dpkg-sig:
+      + Move the use statement for ConfigFile in a way that we don't need
+        it in --client mode. Useful if you want to install the thing in
+        your home on a remote machine.
+      + Add --help to give a brief help statement. (Closes: #257262)
+      + Use value from Changed-By as default key when signing.
+
+ -- Marc 'HE' Brockschmidt <he@debian.org>  Fri,  2 Jul 2004 23:30:24 +0200
+
+dpkg-sig (0.8) unstable; urgency=low
+
+  * HE:
+    - debian/control:
+      + Update the Uploaders field, i'm a DD now!
+      + Depend on perl, not perl-base.
+
+    - debian/rules:
+      + Fix a dh_md5sum problem, it excludes all files with DEBIAN in their
+        path (and we have such files as examples)
+
+    - dpkg-sig:
+      + Fixed the "Signed deb *changes" output to print out the signed deb,
+        not the changes file it was referenced from.
+      + Be a bit more verbose when signing .dscs and .changes.
+      + Verify deb before signing it. [This lead also to a change on the 
+        return value of get_md5sums internally]
+
+ -- Marc 'HE' Brockschmidt <he@debian.org>  Thu, 11 Mar 2004 18:24:45 +0100
+
+dpkg-sig (0.7) unstable; urgency=low
+
+  * HE:
+    - dpkg-sig:
+      + Config file handling: Strip enclosing "s.
+      + Die if gpg fails to sign. (Closes: #236183)
+      + Rename get_md5_sums to get_md5sums.
+      + Don't die when parsing a deb and reading a newline where we
+        actually expected an ar header (can happen if people change
+        stuff with vi). (Closes: #236185)
+      + Cache md5sums in get_md5sums.
+      + Don't ask for a passphrase if both -p/DPKGSIG_CACHE_PASS and
+        -f are used (use the passphrase from the file specified with -f
+        in that case)
+      + Don't use die() if not needed for the weird stuff in eval{}.
+        Created the cute _die() function to do that.
+      + Added a "--remote-dpkg-sig" (also available as "-r") switch to
+        allow users to specify where the dpkg-sig executable is. This
+        is useful if you're not able to get the remote admin to install
+        dpkg-sig.
+      + Rearranged the main routine to drop duplicated code
+      + Aliased add_file_to_ar_archive to add_sig_to_deb
+      + add_sig_to_deb now starts a new ar archive if the file it should
+        write to hasn't existed before.
+      + New switches --get-hashes, --sign-hashes and --write-signature
+        (also available as -h, -d and -w) The first one creates an
+        archiv of hashes of a deb/changes, the second signs it
+        (wherever you want) and the third one adds the signatures to
+        the deb(s and corrects the changes file).
+      + Make standard output more verbose.
+      + Notice when people try dpkg-sig --sign foo --sign-changes *deb
+        (--sign-changes uses an optional argument). Assume that this
+        wasn't meant, choose yes for --sign-changes and process the files
+        as other cli arguments.
+
+    - dpkg-sig.1:
+      + Document the new --remote-dpkg-sig stuff.
+      + Document the new --get-hashes, --sign-hashes and --write-signature
+        options.
+      + Converted to POD, now available as dpkg-sig.pod
+
+    - dpkg-sig.pod:
+      + Added (converted from dpkg-sig.1)
+
+    - debian/control:
+      + Build-Depend on perl, we need pod2man to create the manpage.
+
+    - debian/rules:
+      + Create manpage from dpkg-sig.pod 
+
+ -- Marc 'HE' Brockschmidt <he@debian.org>  Thu, 11 Mar 2004 14:04:35 +0100
+
+dpkg-sig (0.6) unstable; urgency=high
+
+  * he:
+    - dpkg-sig:
+      + Fixed bug with cached passphrases leading to invalid signatures.
+        We don't use GnuPG anymore (we now talk to GPG directly).
+      + Added a "--gpgoptions" (also available as "-g") to allow users to
+        give gpg arbitrary options.
+      + Don't use only -r to check if a .dsc file is readable. Replaced
+        with file_readable, which can handle a ssh://HOST:FILE path.
+    - debian/control: Remove the libgnupg-perl suggestion.
+    - dpkg-sig.1:
+      + We don't need the GnuPG perl module to read the passphrase from a file.
+      + We don't need the GnuPG to use the cached passphrase.
+      + Document the new "--gpgoptions" stuff. 
+
+ -- Marc 'HE' Brockschmidt <he@debian.org>  Mon,  1 Mar 2004 19:08:40 +0100
+
+dpkg-sig (0.5) unstable; urgency=low
+
+  * he:
+    - Added new switch "--passphrase-file" (also available as "-f"). Allows
+      signers to store their gpg passphrase in a file.
+    - Now signs *changes and *dsc without the help of debsign. This is very
+      useful for people signing many debs, as it uses the cached passphrase
+      or the file with the passphrase.
+    - Added example of the signing process, with a sample package and all
+      temp files. Have fun.
+    - debian/{control,rules}: Changed to install the examples. Now uses
+      debhelper version 4.
+   * aba:
+     - added the new options to the man page, and added an usage example.
+
+ -- Andreas Barth <aba@not.so.argh.org>  Sun, 29 Feb 2004 16:41:09 +0100
+
+dpkg-sig (0.4) unstable; urgency=high
+
+  * Fixed the caching of the gpg passphrase.
+  * Added support to (re)sign changes files with debsign.
+  * Fixed a bug in the remote signing code (content of changes files deleted)
+  * Added support for a --debug switch, leading to a log of the communication
+    between master and client in the remote /tmp/dpkg-sig.log. Use with care.
+
+ -- Marc Brockschmidt <marc@dch-faq.de>  Tue, 17 Feb 2004 00:36:23 +0100
+
+dpkg-sig (0.3) unstable; urgency=low
+
+  * Marc 'HE' Brockschmidt is now Co-Maintainer (and sprinkled some
+    perl-magic on it)
+  * Remote signing now possible.
+  * Change the signature format to V3.
+  * Fix error with devscripts containing @. Closes: #229545
+
+ -- Andreas Barth <aba@not.so.argh.org>  Sun,  1 Feb 2004 22:18:38 +0100
+
+dpkg-sig (0.2) unstable; urgency=low
+
+  * Create temporary directory only once
+  * Can now sign also changes-files.
+
+ -- Andreas Barth <aba@not.so.argh.org>  Wed, 14 Jan 2004 21:53:08 +0100
+
+dpkg-sig (0.1) unstable; urgency=low
+
+  * Initial release. Closes: #223311
+
+ -- Andreas Barth <aba@not.so.argh.org>  Sun, 14 Dec 2003 22:36:49 +0100

@@ -1,0 +1,303 @@
+=pod
+
+=head1 NAME
+
+B<dpkg-sig> - Debian package archive (.deb) signature generation and verification tool
+
+=head1 SYNOPSIS
+
+B<dpkg-sig> B<[options]> B<--sign> I<role> I<[archive|changes]>+
+
+B<dpkg-sig> B<[options]> B<--verify> I<[archive]>+
+
+B<dpkg-sig> B<[options]> B<--verify-role> I<role> I<[archive]>+
+
+B<dpkg-sig> B<[options]> B<--verify-exact> I<member> I<[archive]>+
+
+B<dpkg-sig> B<[options]> B<--list> I<[archive]>+
+
+B<dpkg-sig> B<[options]> B<--get-hashes> I<role> I<[archive|changes]>+
+
+B<dpkg-sig> B<[options]> B<--sign-hashes> I<[hashes-archive]>+
+
+B<dpkg-sig> B<[options]> B<--write-signature> I<[hashes-archive]>+
+
+=head1 DESCRIPTION
+
+B<dpkg-sig> creates and verifies signatures on Debian archives (.deb-files).
+
+Use higher-level tools to install and remove packages from your system, 
+and to verify a signature as acceptable for your system.
+
+A usage example can be found at the end of this man page.
+
+=head1 ACTION OPTIONS
+
+=over 4
+
+=item B<--sign>, B<-s> I<role>
+
+Signs a standard-conforming Debian archive. I<role> gives the name of the
+signature (usually 'builder' for the builder of the .deb).  The
+signature is made using your default key, unless specified via any
+explicit or implicit option (see below).
+
+If one or more .changes-files are given, the md5sums inside the
+.changes file(s) are also updated.
+
+If a .changes file was gpg-signed, the signature is removed when
+updating the md5sums.
+
+=item B<--verify>, B<-c>; B<--verify-role>; B<--verify-exact>
+
+Verifies a signature on the given archive file. B<--verify> and B<-c> just
+check all signatures; B<--verify-role> verifies all signatures with a given
+role, and B<--verify-exact> wants the exact name of the archive member
+(without the leading _gpg). However, both commands also accept perl regular
+expressions as the name.
+
+All verify variants output (in turn for each signature) either a line 
+consisting of GOODSIG, role, gpg-fingerprint and signature time (in
+seconds since 1970-1-1 0:00:00 UTC), or BADSIG.
+
+Starting from version 0.12, B<dpkg-sig> returns 2 if a bad signature
+was found when trying to verify. If an unknown key was used to
+sign a .deb, B<dpkg-sig> returns 3. 
+
+=item B<--list>, B<-l>, B<-t>
+
+Lists all names inside the deb that look like a signature.
+
+=item B<--get-hashes>, B<--sign-hashes>, B<--write-signature>
+
+B<--get-hashes> creates an B<ar>(1) archive containing a control file
+part and files with the digests of all the .debs specified on the
+command-line or named in the .changes file(s) specified on the
+command-line.
+
+After that, you can transfer this (small) file to another machine, for 
+example an offline system containing your gpg keys. (Yep, that's paranoid!)
+
+B<--sign-hashes> then signs this file containing the digests (in fact,
+it replaces the digests parts with their signatures).
+
+Now transfer the signed file back to the machine where you created the
+hashes and use B<--write-signature> to add the signatures from the archive
+to the deb. 
+
+=back
+
+=head1 OPTIONS
+
+=over 4
+
+=item B<-m> I<maintainer>
+
+Specify the maintainer name to be used for signing.
+
+=item B<-e> I<maintainer>
+
+Same as B<-m> but takes precedence.
+
+=item B<-k> I<keyid>
+
+Specify the key ID to be used for signing; overrides any B<-e> or B<-m>
+option.
+
+=item B<--verbose>
+
+Get some more details.
+
+=item B<--batch=1>
+
+Gurantees that the non-verbose output will not change. Use this if you want
+to parse the output.
+
+=item B<--also-v3-sig>
+
+The signature format changed between version 0.10 and 0.11. If you want to
+verify old signatures too, try this switch.
+
+=item B<--also-v2-sig>
+
+The signature format changed between version 0.2 and 0.3. If you want to
+verify old signatures too, try this switch.
+
+=item B<--cache-passphrase>, B<-p>
+
+Caches the gpg-passphrase inside B<dpkg-sig>. This needs the suggested
+package C<libterm-readkey-perl>.
+
+Be warned: Doing this is insecure, B<dpkg-sig> doesn't protect the
+memory it uses to store the passphrase.
+
+=item B<--sign-changes>, B<-a> [ no | auto | yes | full | force_full ]
+
+Tells whether also sign the .changes and .dsc-files. The default is
+I<auto>, which means that the .changes-file is re-signed if it was
+signed before.
+
+The other values are I<no> (don't sign .changes, and remove an existing
+signature), I<yes> (always add a signature to .changes), I<full> (always
+add a signature to .changes, and also sign the .dsc-file if there was
+no previous signature; otherwise ask) and I<force_full> (always add a
+signature to both the .changes and .dsc files).
+
+=item B<--remote-dpkg-sig>, B<-r> I<path>
+
+Use this if you want to specify where B<dpkg-sig> can find the
+B<dpkg-sig> executable on the remote machine.
+
+This is useful if you're not able/allowed to install B<dpkg-sig> as a .deb.
+To do that, copy the script to something like F<~/bin/dpkg-sig> on the remote
+system. After that, you can call your local B<dpkg-sig> with something like the
+following to use the remote signing/verifying features:
+
+C<dpkg-sig --sign builder -r ~/bin/dpkg-sig ssh://user@host:~/some-deb_version_arch.changes>
+
+=item B<--remote-ssh-port>, B<-o> I<port>
+
+Port of the B<sshd> on the remote host. Default value is 22.
+
+=back
+
+=head1 MORE OPTIONS
+
+These options should normally not be used, but are here for completeness.
+Be warned: Use them only if you really know what you are doing.
+
+=over 4
+
+=item B<--gpgoptions>, B<-g> I<gpg options>
+
+Use this to pass arbitrary options to B<gpg>(1) whenever a file is
+signed. As this can lead to broken signatures, test your changes
+carefully.
+
+=item B<--passphrase-file>, B<-f> I<passphrase file>
+
+Tells gpg to use the passphrase in I<file> to sign.
+
+Be warned: Doing this is insecure, DON'T use this feature.
+However, in some cases (e.g. automatic signing on a buildd) this could be
+useful, and is still better than using a gpg-key without passphrase. You
+can gain at least some security by putting this file on a ramdisk, but it
+would be better to use B<gpg-agent>(1).
+
+=back
+
+=head1 CONFIGURATION VARIABLES
+
+The two configuration files F</etc/devscripts.conf> and
+F<~/.devscripts> are sourced in that order to set configuration
+variables.  Command line options can be used to override configuration
+file settings.  Environment variable settings are ignored for this
+purpose.  The currently recognised variables are:
+
+=over 4
+
+=item B<DEBSIGN_MAINT>
+
+This is the B<-m> option.
+
+=item B<DEBSIGN_KEYID>, B<DPKGSIG_KEYID>
+
+This is the B<-k> option, and B<DPKGSIG_KEYID> has most precedence.
+
+=item B<DPKGSIG_SIGN_CHANGES>
+
+This is the B<--sign-changes> option. Valid values are I<no>, I<auto>,
+I<yes>, I<full> and I<force_full>.
+
+=item B<DPKGSIG_CACHE_PASS>
+
+This is the B<--cache-passphrase> option. Set this to a true value
+to enable it.
+
+=back
+
+=head1 SIGNATURE FORMAT
+
+The signatures created by B<dpkg-sig> are added in a strict
+standard-conforming way to the .deb archive file. The signature itself
+is made on a file formatted like a Debian control file. The fields of
+this file are: Version, specifying a B<dpkg-sig> file version number;
+Signer, giving the name of the signer; Date and Role, and finally
+Files, which gives the digests of the prior contents of the .deb
+archive file.  Note that this includes any prior signatures made by
+B<dpkg-sig>. Thus it is possible to verify any signature by hand with
+just B<ar>(1), B<md5sum>(1), B<sha1sum>(1) and B<gpg>(1).  Signing a 
+list of digests has the advantage that it is possible to perform remote
+signatures without transferring the whole archive file.  This does
+require one to trust the remote machine, though!
+
+=head1 REMOTE SIGNING
+
+B<dpkg-sig> can sign remote files using B<ssh>(1) without transferring
+the whole file to the local machine, or the key to the remote
+machine. Simply specify the file with
+C<ssh://[user@]machine:/path/to/file>, and have B<dpkg-sig> installed
+on the remote machine.  (See also the B<--remote-dpkg-sig> option
+above.)
+
+Remote signing supports the usual filename globbing.
+
+Remote signing has been tested, but is at the moment considered a more
+experimental feature.
+
+=head1 BUGS, TODO
+
+B<dpkg-sig> should be able to also verify signatures made by older
+code.  This may be added in a later version.
+
+B<dpkg-sig> assumes that any given archive is strictly standard-compatible.
+This is valid for archives created by B<dpkg-deb> - but if you're not sure 
+about a archive, verify this yourself, or live with the risk of a bad 
+signature.
+
+More documentation about the signature format should be added.
+
+Deal better with expired etc. keys and signatures.
+
+Better inclusion into the other tools like B<dpkg-buildpackage>.
+
+And of course: Still missing is testing, testing and testing B<dpkg-sig>.
+
+=head1 USAGE EXAMPLE
+
+A typical use is to sign packages before a (maintainer-)upload. This can
+be done by running B<dpkg-buildpackage> and afterwards calling 
+C<dpkg-sig --sign builder *.changes>.
+
+If you want to do all signing with B<dpkg-sig> you could run 
+C<dpkg-buildpackage -uc -us> and afterwards call 
+C<dpkg-sig --sign builder --sign-changes full *.changes>.
+If you do this, there is no need to call B<debsign> any more, as
+B<dpkg-sig> does all the signing for you.
+
+If you don't want to type in your passphrase multiple times, then you could
+add the option B<--cache-passphrase>.
+
+The options B<--sign-changes> and B<--cache-passphrase> could be
+replaced with setting the variables B<DPKGSIG_SIGN_CHANGES> respectivly
+B<DPKGSIG_CACHE_PASS> (set the later one set to a true value) in 
+F<~/.devscripts>.
+
+The key-id is automatically set from F</etc/devscripts.conf> and
+F<~/.devscripts>, but could be overridden via the B<-m>, B<-e> or B<-k>
+command line options (see above).
+
+=head1 SEE ALSO
+
+B<deb>(5), B<debsign>(1), B<dpkg-deb>(8), F</usr/share/doc/dpkg-sig/>
+
+=head1 AUTHOR
+
+B<dpkg-sig> and this manpage were written by Andreas Barth and Marc
+Brockschmidt. They are Copyright (C) 2003-2006 by them and released
+under the GNU General Public Licence version 2 or later; there is NO
+WARRANTY.  See F</usr/share/doc/dpkg-sig/copyright> and
+F</usr/share/common-licenses/GPL> for details. Some parts of this
+manpage are taken from debsign.
+
+=cut

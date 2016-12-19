@@ -1,0 +1,5 @@
+dpkg-sig-example (0.1) unstable; urgency=low
+
+  * Foo.
+
+ -- Marc 'HE' Brockschmidt <he@debian.org>  Sat, 28 Feb 2004 20:51:00 +0100

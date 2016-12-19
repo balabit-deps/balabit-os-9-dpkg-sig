@@ -1,0 +1,31 @@
+-----BEGIN PGP SIGNED MESSAGE-----
+Hash: SHA1
+
+Format: 1.7
+Date: Sat, 28 Feb 2004 20:51:00 +0100
+Source: dpkg-sig-example
+Binary: dpkg-sig-example
+Architecture: source all
+Version: 0.1
+Distribution: unstable
+Urgency: low
+Maintainer: Andreas Barth <aba@not.so.argh.org>
+Changed-By: Marc 'HE' Brockschmidt <he@debian.org>
+Description: 
+ dpkg-sig-example - sample package
+Changes: 
+ dpkg-sig-example (0.1) unstable; urgency=low
+ .
+   * Foo.
+Files: 
+ 34a85c5305f88a78b3e7d6339c4121b1 565 devel optional dpkg-sig-example_0.1.dsc
+ a7beeef85a612c4cb3cf7e1e26f64739 951 devel optional dpkg-sig-example_0.1.tar.gz
+ 16b320195066f99fd82ea7c6da550484 1386 devel optional dpkg-sig-example_0.1_all.deb
+
+-----BEGIN PGP SIGNATURE-----
+Version: GnuPG v1.2.5 (GNU/Linux)
+
+iEYEARECAAYFAkFykPEACgkQmO5zOp3h7rEZEQCfbyaaDgOLBfFKnR3qhApDaQL1
+sqMAn2ixLMp+47vuv/bOHoMa+7JDpoCs
+=6vBZ
+-----END PGP SIGNATURE-----

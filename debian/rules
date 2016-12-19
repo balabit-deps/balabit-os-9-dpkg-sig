@@ -1,0 +1,42 @@
+#!/usr/bin/make -f
+
+build-arch:
+build-indep:
+build:
+
+clean:
+	dh_testdir
+	dh_testroot
+	dh_clean
+
+binary-arch: build-arch
+
+binary-indep: build-indep
+	dh_testdir
+	dh_testroot
+	dh_clean
+	mkdir -p debian/dpkg-sig/usr/share/man/man1 
+	mkdir -p debian/dpkg-sig/usr/share/man/man7
+	mkdir -p debian/dpkg-sig/usr/share/doc/dpkg-sig
+	mkdir -p debian/dpkg-sig/usr/share/lintian/overrides
+	mkdir -p debian/dpkg-sig/usr/bin
+	cp dpkg-sig debian/dpkg-sig/usr/bin
+	pod2man --section=1 --release="Debian Project" --center="Debian GNU/Linux manual" dpkg-sig.pod debian/dpkg-sig/usr/share/man/man1/dpkg-sig.1
+	pod2man --section=7 --release="Debian Project" --center="Debian GNU/Linux manual" dpkg-sig debian/dpkg-sig/usr/share/man/man7/dpkg-sig.7
+	cp copyright debian/changelog debian/dpkg-sig/usr/share/doc/dpkg-sig
+	cp debian/lintian.overrides debian/dpkg-sig/usr/share/lintian/overrides/dpkg-sig
+
+	dh_installexamples
+	dh_compress
+	dh_gencontrol
+	dh_md5sums
+	#dh_md5sums excludes everything with DEBIAN in its path...
+	cd debian/dpkg-sig && \
+	  md5sum >> DEBIAN/md5sums \
+	   usr/share/doc/dpkg-sig/examples/sample/debian/tmp/DEBIAN/control \
+	   usr/share/doc/dpkg-sig/examples/sample/debian/tmp/DEBIAN/md5sums
+	
+	dh_fixperms
+	dh_builddeb
+
+binary: binary-indep

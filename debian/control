@@ -1,0 +1,18 @@
+Source: dpkg-sig
+Section: devel
+Priority: optional
+Uploaders: Andreas Barth <aba@not.so.argh.org>
+Maintainer: Marc 'HE' Brockschmidt <he@debian.org>
+Build-Depends: debhelper (>= 10~), perl
+Standards-Version: 3.6.2
+
+Package: dpkg-sig
+Architecture: all
+Depends: perl, gnupg, libdigest-md5-perl, libconfig-file-perl
+Suggests: ssh, libterm-readkey-perl
+Description: create and verify signatures on .deb-files
+ dpkg-sig is a low-level tool for creation and verification of
+ signature on Debian binary packages (.deb-files).
+ .
+ The created signed packages are strict compatible with dpkg and the
+ apt-utils.

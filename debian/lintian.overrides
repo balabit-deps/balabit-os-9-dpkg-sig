@@ -1,0 +1,2 @@
+dpkg-sig: zero-byte-file-in-doc-directory usr/share/doc/dpkg-sig/examples/sample/debian/tmp/tmp/test
+dpkg-sig: zero-byte-file-in-doc-directory usr/share/doc/dpkg-sig/examples/sample/test

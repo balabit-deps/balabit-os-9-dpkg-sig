@@ -1,0 +1,21 @@
+* Understand the way debsign works and verify its signatures.
+
+* What happens with expired keys?
+
+* Get about 1000 DDs to test the thing and report bugs.
+
+* Create patches for katie, the buildds and dpkg to sign and verify
+  signatures everytime a package is touched.
+
+* We need a way to check if the signature is done by a DD ... errr ...
+  Reworded: To check if the package is signed with a DD's gpg key (ATM
+  we don't see the difference between someone who rebuilt the package
+  with his h4x0r3d sk111z signing as "builder" and a DD who's supposed
+  to do so). Perhaps something with debian-keyring, gpg
+  --no-default-keyring --keyring, but that won't work with NMs. Do we
+  need a wanna-be-dd-keyring? Perhaps one with all keys of people
+  with a package in the archive. Oh, and for non-Debian sources we
+  would need a --accept-people-not-associated-with-debian switch. 
+  *sigh* 
+  We have to discuss this at least with the debian keyring manager, 
+  and perhaps some more DDs (#debian-devel? debian-devel@l.d.o?)

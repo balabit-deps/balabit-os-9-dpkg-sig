@@ -1,0 +1,25 @@
+#!/usr/bin/make -f
+
+build:
+
+clean:
+	dh_testdir
+	dh_testroot
+	dh_clean
+
+binary-arch:
+
+binary-indep:
+	dh_testdir
+	dh_testroot
+	dh_clean
+	mkdir -p debian/tmp/tmp
+	cp test debian/tmp/tmp
+
+	dh_compress
+	dh_gencontrol
+	dh_md5sums
+	dh_fixperms
+	dh_builddeb
+
+binary: binary-indep

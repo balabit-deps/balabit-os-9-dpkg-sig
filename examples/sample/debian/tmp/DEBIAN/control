@@ -1,0 +1,9 @@
+Package: dpkg-sig-example
+Version: 0.1
+Section: devel
+Priority: optional
+Architecture: all
+Installed-Size: 12
+Maintainer: Andreas Barth <aba@not.so.argh.org>
+Description: sample package
+ This is a example to show how dpkg-sig works.
